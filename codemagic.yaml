@@ -3,31 +3,15 @@ workflows:
     name: iOS Release
     max_build_duration: 120
     instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: Codemagic
     environment:
-      ios_signing:
-        distribution_type: development
-        bundle_identifier: com.yamasaki.pocketdic
       flutter: 3.44.0
       xcode: latest
       cocoapods: default
     scripts:
       - name: Get Flutter packages
         script: flutter packages pub get
-      - name: Build iOS release
+      - name: Build iOS (no codesign)
         script: |
           flutter build ios --release --no-codesign
-      - name: Build and sign iOS IPA
-        script: |
-          xcode-project use-profiles
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
+      - build/ios/iphoneos/Runner.app
