@@ -28,8 +28,8 @@ workflows:
           flutter build ios --release --no-codesign
       - name: Build IPA
         script: |
-          # export_options.plistを手動作成
-          cat > /tmp/export_options.plist << EOF
+          # export_options.plistを作成
+          cat > /tmp/export_options.plist << 'PLIST_EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -49,11 +49,22 @@ workflows:
               </dict>
           </dict>
           </plist>
-          EOF
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner \
-            --export-options-plist /tmp/export_options.plist
+          PLIST_EOF
+          # アーカイブ
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath /tmp/Runner.xcarchive \
+            DEVELOPMENT_TEAM=X6RN697XPY \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGN_STYLE=Manual \
+            PROVISIONING_PROFILE_SPECIFIER="PocketDIC_AppStore" \
+            archive
+          # IPA書き出し
+          xcodebuild -exportArchive \
+            -archivePath /tmp/Runner.xcarchive \
+            -exportOptionsPlist /tmp/export_options.plist \
+            -exportPath build/ios/ipa
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
