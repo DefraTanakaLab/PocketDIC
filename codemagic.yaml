@@ -64,10 +64,6 @@ workflows:
             -scheme Runner \
             -configuration Release \
             -archivePath /tmp/Runner.xcarchive \
-            DEVELOPMENT_TEAM=X6RN697XPY \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            CODE_SIGN_STYLE=Manual \
-            PROVISIONING_PROFILE_SPECIFIER="PocketDIC_AppStore" \
             archive
           xcodebuild -exportArchive \
             -archivePath /tmp/Runner.xcarchive \
