@@ -35,6 +35,8 @@ workflows:
           echo "Profile installed"
       - name: Get Flutter packages
         script: flutter packages pub get
+      - name: Build iOS (generate ephemeral files)
+        script: flutter build ios --release --no-codesign
       - name: Build IPA
         script: |
           cat > /tmp/export_options.plist << 'PLIST_EOF'
