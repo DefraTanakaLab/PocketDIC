@@ -59,6 +59,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>DIC解析のためカメラを使用します。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>解析結果の画像を保存するため写真ライブラリにアクセスします。</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
