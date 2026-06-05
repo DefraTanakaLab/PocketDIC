@@ -17,7 +17,17 @@ workflows:
       - name: Set up code signing
         script: |
           printf '%s' "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
-          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
+          # keychainにp12をインポート
+          security import /tmp/certificate.p12 \
+            -P "$CM_CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 \
+            -k ~/Library/Keychains/login.keychain-db
+          security set-key-partition-list \
+            -S apple-tool:,apple: -s -k "" \
+            ~/Library/Keychains/login.keychain-db || true
+          # 証明書確認
+          security find-identity -v -p codesigning
+          # プロビジョニングプロファイルをインストール
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp ios/PocketDIC_AppStore.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Get Flutter packages
