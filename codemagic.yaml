@@ -21,12 +21,13 @@ workflows:
           security import /tmp/certificate.p12 \
             -P "$CM_CERTIFICATE_PASSWORD" \
             -A -t cert -f pkcs12 \
-            -k ~/Library/Keychains/login.keychain-db
+            -k ~/Library/Keychains/login.keychain-db && echo "Import succeeded" || echo "Import failed"
           security set-key-partition-list \
             -S apple-tool:,apple: -s -k "" \
-            ~/Library/Keychains/login.keychain-db || true
-          # 証明書確認
-          security find-identity -v -p codesigning
+            ~/Library/Keychains/login.keychain-db 2>&1 | head -5 || true
+          # 証明書確認（プライベートキーを持つ証明書のみ表示）
+          echo "=== Available signing identities ==="
+          security find-identity -v -p codesigning || echo "No signing identities found"
           # プロビジョニングプロファイルをインストール
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp ios/PocketDIC_AppStore.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
