@@ -58,7 +58,7 @@ workflows:
           </dict>
           </plist>
           PLIST_EOF
-          # アーカイブ
+          # アーカイブ（PROVISIONING_PROFILE_SPECIFIERはproject.pbxprojで設定済み）
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme Runner \
             -configuration Release \
@@ -66,7 +66,6 @@ workflows:
             DEVELOPMENT_TEAM=X6RN697XPY \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             CODE_SIGN_STYLE=Manual \
-            PROVISIONING_PROFILE_SPECIFIER="PocketDIC_AppStore" \
             archive
           # IPA書き出し
           xcodebuild -exportArchive \
