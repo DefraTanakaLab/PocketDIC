@@ -16,9 +16,9 @@ workflows:
         script: keychain initialize
       - name: Set up code signing
         script: |
-          echo $CM_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+          printf '%s' "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
           keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
-          echo $CM_PROVISIONING_PROFILE | base64 --decode > /tmp/profile.mobileprovision
+          printf '%s' "$CM_PROVISIONING_PROFILE" | base64 --decode > /tmp/profile.mobileprovision
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Get Flutter packages
