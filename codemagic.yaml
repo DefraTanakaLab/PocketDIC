@@ -58,7 +58,18 @@ workflows:
           </dict>
           </plist>
           PLIST_EOF
-          flutter build ipa --release --export-options-plist=/tmp/export_options.plist
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath /tmp/Runner.xcarchive \
+            DEVELOPMENT_TEAM=X6RN697XPY \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGN_STYLE=Manual \
+            archive
+          xcodebuild -exportArchive \
+            -archivePath /tmp/Runner.xcarchive \
+            -exportOptionsPlist /tmp/export_options.plist \
+            -exportPath build/ios/ipa
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
