@@ -16,21 +16,19 @@ workflows:
         script: keychain initialize
       - name: Set up code signing
         script: |
+          # p12をデコード
           printf '%s' "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
-          # keychainにp12をインポート
-          security import /tmp/certificate.p12 \
-            -P "$CM_CERTIFICATE_PASSWORD" \
-            -A -t cert -f pkcs12 \
-            -k ~/Library/Keychains/login.keychain-db && echo "Import succeeded" || echo "Import failed"
-          security set-key-partition-list \
-            -S apple-tool:,apple: -s -k "" \
-            ~/Library/Keychains/login.keychain-db 2>&1 | head -5 || true
-          # 証明書確認（プライベートキーを持つ証明書のみ表示）
-          echo "=== Available signing identities ==="
-          security find-identity -v -p codesigning || echo "No signing identities found"
+          echo "p12 size: $(wc -c < /tmp/certificate.p12) bytes"
+          # Codemagicキーチェーンにインポート
+          keychain add-certificates \
+            --certificate /tmp/certificate.p12 \
+            --certificate-password "$CM_CERTIFICATE_PASSWORD"
+          echo "=== Signing identities ==="
+          security find-identity -v -p codesigning
           # プロビジョニングプロファイルをインストール
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp ios/PocketDIC_AppStore.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          echo "Profile installed"
       - name: Get Flutter packages
         script: flutter packages pub get
       - name: Build iOS release
