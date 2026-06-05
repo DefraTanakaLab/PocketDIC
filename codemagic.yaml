@@ -34,7 +34,9 @@ workflows:
           cp ios/PocketDIC_AppStore.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
           echo "Profile installed"
       - name: Get Flutter packages
-        script: flutter packages pub get
+        script: |
+          flutter packages pub get
+          dart run flutter_launcher_icons
       - name: Build iOS (generate ephemeral files)
         script: flutter build ios --release --no-codesign
       - name: Build IPA
