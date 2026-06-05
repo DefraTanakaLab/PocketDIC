@@ -9,8 +9,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.yamasaki.pocketdic
-        certificate: PocketDIC_Distribution
-        provisioning_profile: PocketDIC_AppStore
       flutter: 3.44.0
       xcode: latest
       cocoapods: default
