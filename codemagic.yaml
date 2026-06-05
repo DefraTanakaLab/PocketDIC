@@ -18,9 +18,8 @@ workflows:
         script: |
           printf '%s' "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
           keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
-          printf '%s' "$CM_PROVISIONING_PROFILE" | base64 --decode > /tmp/profile.mobileprovision
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          cp ios/PocketDIC_AppStore.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Get Flutter packages
         script: flutter packages pub get
       - name: Build iOS release
