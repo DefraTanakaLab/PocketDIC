@@ -6,19 +6,21 @@ workflows:
     integrations:
       app_store_connect: Codemagic
     environment:
+      groups:
+        - ios_signing
       flutter: 3.44.0
       xcode: latest
       cocoapods: default
     scripts:
       - name: Set up keychain
         script: keychain initialize
-      - name: Fetch signing files
+      - name: Set up code signing
         script: |
-          app-store-connect fetch-signing-files \
-            com.yamasaki.pocketdic \
-            --type IOS_APP_STORE \
-            --create
-          keychain add-certificates
+          echo $CM_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
+          echo $CM_PROVISIONING_PROFILE | base64 --decode > /tmp/profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Get Flutter packages
         script: flutter packages pub get
       - name: Build iOS release
