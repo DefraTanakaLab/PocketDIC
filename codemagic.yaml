@@ -31,12 +31,8 @@ workflows:
           echo "Profile installed"
       - name: Get Flutter packages
         script: flutter packages pub get
-      - name: Build iOS release
-        script: |
-          flutter build ios --release --no-codesign
       - name: Build IPA
         script: |
-          # export_options.plistを作成
           cat > /tmp/export_options.plist << 'PLIST_EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -58,20 +54,7 @@ workflows:
           </dict>
           </plist>
           PLIST_EOF
-          # アーカイブ（PROVISIONING_PROFILE_SPECIFIERはproject.pbxprojで設定済み）
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -archivePath /tmp/Runner.xcarchive \
-            DEVELOPMENT_TEAM=X6RN697XPY \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            CODE_SIGN_STYLE=Manual \
-            archive
-          # IPA書き出し
-          xcodebuild -exportArchive \
-            -archivePath /tmp/Runner.xcarchive \
-            -exportOptionsPlist /tmp/export_options.plist \
-            -exportPath build/ios/ipa
+          flutter build ipa --release --export-options-plist=/tmp/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
