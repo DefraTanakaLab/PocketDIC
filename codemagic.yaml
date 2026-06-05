@@ -64,6 +64,7 @@ workflows:
             -scheme Runner \
             -configuration Release \
             -archivePath /tmp/Runner.xcarchive \
+            DEVELOPMENT_TEAM=X6RN697XPY \
             archive
           xcodebuild -exportArchive \
             -archivePath /tmp/Runner.xcarchive \
