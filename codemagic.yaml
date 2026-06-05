@@ -12,17 +12,21 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Set up keychain
-        script: keychain initialize
       - name: Set up code signing
         script: |
           # p12をデコード
           printf '%s' "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
           echo "p12 size: $(wc -c < /tmp/certificate.p12) bytes"
-          # Codemagicキーチェーンにインポート
-          keychain add-certificates \
-            --certificate /tmp/certificate.p12 \
-            --certificate-password "$CM_CERTIFICATE_PASSWORD"
+          # login.keychainに直接インポート
+          security unlock-keychain -p "" ~/Library/Keychains/login.keychain-db || true
+          security import /tmp/certificate.p12 \
+            -P "$CM_CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 \
+            -k ~/Library/Keychains/login.keychain-db
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s -k "" \
+            ~/Library/Keychains/login.keychain-db || true
           echo "=== Signing identities ==="
           security find-identity -v -p codesigning
           # プロビジョニングプロファイルをインストール
